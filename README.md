@@ -1,10 +1,20 @@
 # HWALBINDANG · 활빈당
 
-국제 CTF 대회에 참가하고 버그 바운티 활동을 하는 해킹팀 활빈당의 공식 웹사이트 디자인 데모입니다. 반응형 단일 HTML 페이지로 구성되어 별도의 설치나 빌드 없이 실행할 수 있습니다.
+국제 CTF 대회에 참가하고 버그 바운티 활동을 하는 해킹팀 활빈당의 공식 웹사이트 디자인 데모입니다. 화면 구조와 스타일은 `index.html`에, 동작은 `src/main.ts`에 있습니다.
 
 ## 실행
 
-`index.html`을 브라우저에서 엽니다. 정적 웹 호스팅을 사용하는 경우 `index.html`과 `robots.txt`를 함께 웹 루트에 배치하면 됩니다.
+저장소에 포함된 `assets/main.js`를 사용하므로 `index.html`을 브라우저에서 바로 열 수 있습니다. 정적 웹 호스팅에서는 `index.html`, `assets/main.js`, `robots.txt`를 같은 디렉터리 구조로 배치합니다.
+
+동작을 수정할 때는 Node.js를 설치한 뒤 다음 명령으로 TypeScript를 확인하고 JavaScript를 다시 생성합니다.
+
+```sh
+npm ci
+npm run check
+npm run build
+```
+
+`src/main.ts`가 원본이며, 빌드 결과인 `assets/main.js`도 함께 저장합니다. 로컬 서버로 확인하려면 `python3 -m http.server 8000`을 실행하고 `http://localhost:8000`을 엽니다.
 
 ## 구성
 
@@ -19,9 +29,8 @@
 
 첫 방문은 한국어로 표시됩니다. 상단 `EN` 버튼으로 영어 버전을, `KO` 버튼으로 한국어 버전을 선택할 수 있습니다. 언어를 바꿔도 테마, 연구 분야 탭, 펼친 FAQ 상태는 유지됩니다. JavaScript가 비활성화된 경우에는 한국어 본문을 표시합니다.
 
-HTML, CSS, JavaScript가 `index.html` 안에 포함되어 있습니다. Google Fonts를 불러올 수 없는 환경에서는 시스템 대체 글꼴을 사용합니다.
+HTML과 CSS는 `index.html`에 있습니다. TypeScript는 `assets/main.js`로 컴파일해 실행합니다. Google Fonts를 불러올 수 없는 환경에서는 시스템 대체 글꼴을 사용합니다.
 
 ## 실제 운영 전 교체할 내용
 
 국제 CTF 대회 참가와 버그 바운티 활동은 팀 소개에 반영했습니다. 연구 분야와 스터디 안내 등 나머지 제안 내용은 실제 팀 자료를 확인한 뒤 수정해야 합니다. 대회 실적, 팀원 개인정보, 연락처는 임의로 기재하지 않았습니다. 지원 접수와 외부 메시지 전송 기능은 포함되어 있지 않습니다.
-
