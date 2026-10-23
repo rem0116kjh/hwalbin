@@ -27,7 +27,8 @@
     "navAbout": "About",
     "navResearch": "Research",
     "navActivity": "Activities",
-    "hero": "<strong>Hey there! New to security?</strong><br>Hacking team: Hwalbin<br>International CTF competitions · Bug bounty hunting",
+    "hero": "<strong>Beyond boundaries. Toward a safer world.</strong><br>We are Hwalbin. We question, explore, and share.",
+    "heroScroll": "SCROLL TO EXPLORE",
     "exploreAbout": "Meet Hwalbin",
     "exploreActivities": "Explore our activities",
     "aboutTitle": "Question the familiar.<br>Discover <em>new possibilities.</em>",
@@ -123,7 +124,7 @@
     themeButton.setAttribute('aria-label', label);
     themeButton.title = label;
     themeButton.textContent = dark ? '☼' : '☾';
-    themeColor.content = dark ? '#0b0d11' : '#f5f6fa';
+    themeColor.content = dark ? '#08090b' : '#f4f1eb';
   }
 
   function setLanguage(value: Language): void {

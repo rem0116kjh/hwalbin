@@ -1,10 +1,10 @@
 # HWALBINDANG · 활빈당
 
-국제 CTF 대회에 참가하고 버그 바운티 활동을 하는 해킹팀 활빈당의 공식 웹사이트 디자인 데모입니다. 화면 구조와 스타일은 `index.html`에, 동작은 `src/main.ts`에 있습니다.
+국제 CTF 대회에 참가하고 버그 바운티 활동을 하는 해킹팀 활빈당의 공식 웹사이트 디자인 데모입니다. 화면 구조와 한국어 기본 문구는 `index.html`에, 스타일은 `assets/style.css`에, 동작과 영어 번역은 `src/main.ts`에 있습니다.
 
 ## 실행
 
-저장소에 포함된 `assets/main.js`를 사용하므로 `index.html`을 브라우저에서 바로 열 수 있습니다. 정적 웹 호스팅에서는 `index.html`, `assets/main.js`, `robots.txt`를 같은 디렉터리 구조로 배치합니다.
+저장소에 포함된 `assets/main.js`를 사용하므로 `index.html`을 브라우저에서 바로 열 수 있습니다. 정적 웹 호스팅에서는 `index.html`, `robots.txt`와 **`assets` 폴더 전체**를 같은 디렉터리 구조로 배치합니다. CSS와 배경 이미지도 필요하므로 JavaScript 파일만 복사하지 않습니다.
 
 동작을 수정할 때는 Node.js를 설치한 뒤 다음 명령으로 TypeScript를 확인하고 JavaScript를 다시 생성합니다.
 
@@ -29,7 +29,9 @@ npm run build
 
 첫 방문은 한국어로 표시됩니다. 상단 `EN` 버튼으로 영어 버전을, `KO` 버튼으로 한국어 버전을 선택할 수 있습니다. 언어를 바꿔도 테마, 연구 분야 탭, 펼친 FAQ 상태는 유지됩니다. JavaScript가 비활성화된 경우에는 한국어 본문을 표시합니다.
 
-HTML과 CSS는 `index.html`에 있습니다. TypeScript는 `assets/main.js`로 컴파일해 실행합니다. Google Fonts를 불러올 수 없는 환경에서는 시스템 대체 글꼴을 사용합니다.
+`assets/style.css`는 붉은색과 청록색을 사용한 성곽 배경 중심의 디자인을 정의합니다. 사용자가 제공한 원본 이미지 `assets/hwalbin-fortress.png`를 첫 화면의 전체 배경으로 사용하고 마지막 섹션에서도 재사용합니다. 한국어 본문은 `index.html`에 남아 있어 JavaScript 없이도 읽을 수 있습니다.
+
+TypeScript는 `assets/main.js`로 컴파일해 실행합니다. Google Fonts를 불러올 수 없는 환경에서는 시스템 대체 글꼴을 사용합니다.
 
 ## 실제 운영 전 교체할 내용
 
