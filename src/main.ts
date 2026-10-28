@@ -36,18 +36,6 @@
     "aboutTitle": "About the team",
     "aboutLead": "Solve the challenge. Understand how it works.",
     "aboutTeam": "Hwalbin is a hacking team that competes in international CTFs and researches security vulnerabilities. We analyze challenges together, share solutions, and report vulnerabilities within the authorized scope of bug bounty programs.",
-    "membersTitle": "Meet the team",
-    "membersIntro": "Different perspectives.<br>Finding answers together.",
-    "membersScrollHint": "Scroll sideways to meet the team",
-    "membersPrevious": "Previous team member",
-    "membersNext": "Next team member",
-    "memberLead": "Team lead",
-    "memberRole": "Member",
-    "memberReverse": "Reversing",
-    "memberMalware": "Malware analysis",
-    "memberWeb": "Web security",
-    "memberCrypto": "Cryptography",
-    "memberFieldsLabel": "Specialties",
     "factActivity": "Activities",
     "factActivityValue": "International CTFs · Bug bounties",
     "factResearch": "Topics introduced",
@@ -249,38 +237,6 @@
     document.querySelectorAll<HTMLElement>('section[id]').forEach(section => observer.observe(section));
   }
 
-  function setupMembersScroll(): void {
-    const list = required<HTMLUListElement>('#team-members');
-    const controls = required<HTMLElement>('.members-scroll-buttons');
-    const previous = required<HTMLButtonElement>('.members-prev');
-    const next = required<HTMLButtonElement>('.members-next');
-
-    function updateControls(): void {
-      const end = list.scrollWidth - list.clientWidth;
-      previous.disabled = list.scrollLeft <= 1;
-      next.disabled = list.scrollLeft >= end - 1;
-      controls.hidden = end <= 1;
-    }
-
-    function move(direction: number): void {
-      const card = list.querySelector<HTMLElement>('.member-card');
-      if (!card) return;
-      const gap = Number.parseFloat(getComputedStyle(list).columnGap) || 0;
-      list.scrollBy({
-        left: direction * (card.offsetWidth + gap),
-        behavior: reducedMotion.matches ? 'auto' : 'smooth'
-      });
-    }
-
-    previous.addEventListener('click', () => move(-1));
-    next.addEventListener('click', () => move(1));
-    list.addEventListener('scroll', updateControls, { passive: true });
-    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(updateControls).observe(list);
-    else window.addEventListener('resize', updateControls, { passive: true });
-    updateControls();
-  }
-  setupMembersScroll();
-
   function setupMotion(): void {
     const hero = required<HTMLElement>('.hero');
     const particleLayer = required<HTMLElement>('.hero-particles');
@@ -394,7 +350,7 @@
           revealObserver.unobserve(entry.target);
         }
       }, { threshold: .1 });
-      document.querySelectorAll<HTMLElement>('.about-layout > *, .members-layout > *, .section-heading, .research-layout, .activity-layout > *, .faq-layout > *')
+      document.querySelectorAll<HTMLElement>('.about-layout > *, .section-heading, .research-layout, .activity-layout > *, .faq-layout > *')
         .forEach(element => revealObserver.observe(element));
     }
   }
