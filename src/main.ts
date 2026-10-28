@@ -21,64 +21,59 @@
 
   const english = {
     "flagTitle": "You found the flag!",
-    "flagDescription": "Stay curious. Welcome to Hwalbin.",
+    "flagDescription": "Welcome to Hwalbin, curious explorer.",
     "flagClose": "Close",
     "skip": "Skip to content",
     "navAbout": "About",
     "navResearch": "Research",
     "navActivity": "Activities",
-    "hero": "<strong>Beyond boundaries. Toward a safer world.</strong><br>We are Hwalbin. We question, explore, and share.",
-    "heroScroll": "SCROLL TO EXPLORE",
-    "exploreAbout": "Meet Hwalbin",
-    "exploreActivities": "Explore our activities",
-    "aboutTitle": "Question the familiar.<br>Discover <em>new possibilities.</em>",
-    "aboutCuriosity": "How do systems work? What lies beneath the technology we use every day? Hwalbin starts with a spark of curiosity.",
-    "aboutTeam": "Hwalbin is a hacking team that competes in international CTFs and takes part in bug bounty programs. We solve challenges, uncover vulnerabilities, and share what we learn to build a safer tomorrow.",
-    "valueCuriosity": "Curiosity that goes deeper",
-    "valueCuriosityDesc": "Go beyond the answer to understand the principles behind it.",
-    "valueResponsibility": "Responsibility in technology",
-    "valueResponsibilityDesc": "Turn discoveries into safer technology.",
-    "valueTogether": "A culture of growing together",
-    "valueTogetherDesc": "Our questions and experiences inspire the next challenge.",
-    "researchTitle": "Beyond the surface.<br><em>Inside the technology.</em>",
-    "researchIntro": "From the web and systems to binaries and cryptography.<br>We explore security from different perspectives.",
+    "hero": "We are Hwalbin, a hacking team competing in international CTFs and researching security vulnerabilities.",
+    "heroFootnote": "International CTFs · Security research · Bug bounties",
+    "heroScroll": "Learn more",
+    "exploreAbout": "About the team",
+    "exploreActivities": "View activities",
+    "aboutTitle": "About the team",
+    "aboutLead": "Solve the challenge. Understand how it works.",
+    "aboutTeam": "Hwalbin is a hacking team that competes in international CTFs and researches security vulnerabilities. We analyze challenges together, share solutions, and report vulnerabilities within the authorized scope of bug bounty programs.",
+    "factActivity": "Activities",
+    "factActivityValue": "International CTFs · Bug bounties",
+    "factResearch": "Topics introduced",
+    "factResearchValue": "Web · Systems · Reversing · Cryptography",
+    "factRecord": "Public records",
+    "researchTitle": "Research areas",
+    "researchIntro": "Four approaches to understanding security.",
     "webTab": "Web security",
     "systemTab": "System security",
     "reverseTab": "Reverse engineering",
     "cryptoTab": "Cryptography",
-    "webDesc": "We examine the invisible trust boundaries between browsers and servers. By understanding how the web works, we explore how to design secure services.",
-    "systemDesc": "We explore memory, operating systems, and program execution. We study system fundamentals and defenses to understand how to build robust software.",
-    "reverseDesc": "We work backward from compiled programs to understand their design and behavior. Analyzing binaries and execution paths helps us uncover the story behind the code.",
-    "cryptoDesc": "We explore how mathematics protects information. We study cryptographic algorithms and protocols, and what it takes to implement them securely.",
-    "activityTitle": "Questions <em>lead to action.</em>",
-    "activityBadge": "International CTFs · Bug bounties",
-    "ctfTitle": "Competing in international CTFs",
-    "ctfDesc": "We combine our strengths to solve challenges in international CTF competitions, then share our solutions and lessons learned.",
-    "ctfLink": "CTFtime team profile",
-    "ctfMore": "About our CTF activities",
-    "ctfDetail": "We compete as a team in international Capture The Flag (CTF) hacking competitions. Tackling a wide range of security challenges builds our practical skills and teamwork.",
-    "studyTitle": "From personal discoveries to shared knowledge",
-    "studyDesc": "From fundamentals to advanced topics,<br>we study together and learn from one another.",
-    "studyMore": "About our study groups",
-    "studyDetail": "This space introduces our study groups and technical seminars. Topics, schedules, and public resources will be posted here when they are available.",
-    "bountyTitle": "Bug bounty hunting",
-    "bountyDesc": "We discover and report vulnerabilities in real-world services, turning security research into safer services.",
-    "bountyMore": "About our bug bounty work",
-    "bountyDetail": "We investigate vulnerabilities within the authorized scope of bug bounty programs and responsibly report our findings to the affected services.",
-    "faqTitle": "Curious <em>about Hwalbin?</em>",
-    "faqIntro": "Learn about the team and how to get involved.",
+    "webHeading": "From service behavior to vulnerabilities.",
+    "webDesc": "Web security analyzes HTTP traffic, authentication, authorization, and browser and server behavior. It examines vulnerabilities in how services process input and exchange data.",
+    "systemHeading": "Follow memory and execution flow.",
+    "systemDesc": "System security analyzes memory structures, operating systems, and program execution. It examines the causes of memory vulnerabilities and the defenses that prevent them.",
+    "reverseHeading": "Read program behavior from binaries.",
+    "reverseDesc": "Reverse engineering analyzes compiled programs to understand their logic and data flow. Assembly and debugging reveal program behavior without source code.",
+    "cryptoHeading": "Examine cryptographic design and implementation.",
+    "cryptoDesc": "Cryptography examines the mathematics behind cryptographic algorithms and protocols, including vulnerabilities caused by gaps between design assumptions and implementation.",
+    "activityTitle": "Activity records",
+    "internationalCTF": "International CTF",
+    "featuredRank": "10<span>th</span>",
+    "featuredTotal": "out of 608 teams",
+    "featuredDesc": "An international online CTF.<br>We scored 1,907 points in the official results on CTFtime.",
+    "resultLink": "View competition results",
+    "recentRecords": "Competition history",
+    "recordSource": "Source: CTFtime · Dates in Korea Standard Time",
+    "faqTitle": "Frequently asked questions",
+    "faqIntro": "About the team and our activities.",
     "faqTeamQ": "What kind of team is Hwalbin?",
-    "faqTeamA": "Hwalbin is a hacking team that competes in international CTFs and participates in bug bounty programs. We solve security challenges, explore vulnerabilities in real-world services, and share our experience and knowledge.",
+    "faqTeamA": "We are a hacking team that competes in international CTFs, researches security vulnerabilities, and participates in bug bounty programs.",
     "faqFieldsQ": "Which fields do you explore?",
-    "faqFieldsA": "This demo covers web security, system security, reverse engineering, and cryptography. These areas can be adjusted to reflect the team’s actual research focus.",
+    "faqFieldsA": "This page introduces web security, system security, reverse engineering, and cryptography. Select a research tab to read about each area.",
     "faqJoinQ": "Can I apply to join the team?",
-    "faqJoinA": "This demo does not accept applications. Recruitment status, eligibility, and dates will be published once the team’s official announcement is ready.",
-    "faqContactQ": "How can I get in touch or collaborate?",
-    "faqContactA": "Official contact channels are being prepared. Links to the team’s verified email or social channels will be added here when available.",
-    "closing": "Hwalbin. Opening the door to what comes next.",
+    "faqJoinA": "There is currently no recruitment announcement on this website.",
+    "faqRecordQ": "Where can I find competition records?",
+    "faqRecordA": "Hwalbin’s CTFtime team profile lists our competition history and results.",
     "backTop": "Back to top",
-    "demo": "Design demo · ",
-    "historyLink": "View our activity on CTFtime ↗",
+    "historyLink": "All records on CTFtime",
     "homeLabel": "Hwalbin home",
     "navLabel": "Main navigation",
     "researchLabel": "Research areas",
@@ -124,7 +119,7 @@
     themeButton.setAttribute('aria-label', label);
     themeButton.title = label;
     themeButton.textContent = dark ? '☼' : '☾';
-    themeColor.content = dark ? '#08090b' : '#f4f1eb';
+    themeColor.content = dark ? '#111110' : '#f3f0e9';
   }
 
   function setLanguage(value: Language): void {
@@ -137,7 +132,7 @@
       element.setAttribute('aria-label', value === 'en' ? english[key] : korean);
     }
     description.content = value === 'en'
-      ? 'Hwalbin — a hacking team exploring a safer world through international CTF competitions and bug bounty programs. Official website design demo.'
+      ? 'Hwalbin is a hacking team competing in international CTFs and researching security vulnerabilities. Explore our team, research areas, and competition records.'
       : koreanDescription;
     const label = value === 'en' ? '한국어로 전환' : 'Switch to English';
     languageButton.textContent = value === 'en' ? 'KO' : 'EN';
@@ -174,6 +169,8 @@
     menuButton.setAttribute('aria-expanded', 'false');
     updateMenuLabel();
   }
+
+  window.matchMedia('(max-width: 760px)').addEventListener('change', closeMenu);
 
   menuButton.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
