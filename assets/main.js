@@ -13,6 +13,7 @@
     const menuButton = required('.menu');
     const nav = required('.nav');
     const languageButton = required('.language');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const description = required('meta[name="description"]');
     const themeColor = required('meta[name="theme-color"]');
     const koreanDescription = description.content;
@@ -32,6 +33,18 @@
         "aboutTitle": "About the team",
         "aboutLead": "Solve the challenge. Understand how it works.",
         "aboutTeam": "Hwalbin is a hacking team that competes in international CTFs and researches security vulnerabilities. We analyze challenges together, share solutions, and report vulnerabilities within the authorized scope of bug bounty programs.",
+        "membersTitle": "Meet the team",
+        "membersIntro": "Different perspectives.<br>Finding answers together.",
+        "membersScrollHint": "Scroll sideways to meet the team",
+        "membersPrevious": "Previous team member",
+        "membersNext": "Next team member",
+        "memberLead": "Team lead",
+        "memberRole": "Member",
+        "memberReverse": "Reversing",
+        "memberMalware": "Malware analysis",
+        "memberWeb": "Web security",
+        "memberCrypto": "Cryptography",
+        "memberFieldsLabel": "Specialties",
         "factActivity": "Activities",
         "factActivityValue": "International CTFs · Bug bounties",
         "factResearch": "Topics introduced",
@@ -234,6 +247,158 @@
         }, { rootMargin: '-15% 0px -60% 0px', threshold: 0 });
         document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
     }
+    function setupMembersScroll() {
+        const list = required('#team-members');
+        const controls = required('.members-scroll-buttons');
+        const previous = required('.members-prev');
+        const next = required('.members-next');
+        function updateControls() {
+            const end = list.scrollWidth - list.clientWidth;
+            previous.disabled = list.scrollLeft <= 1;
+            next.disabled = list.scrollLeft >= end - 1;
+            controls.hidden = end <= 1;
+        }
+        function move(direction) {
+            const card = list.querySelector('.member-card');
+            if (!card)
+                return;
+            const gap = Number.parseFloat(getComputedStyle(list).columnGap) || 0;
+            list.scrollBy({
+                left: direction * (card.offsetWidth + gap),
+                behavior: reducedMotion.matches ? 'auto' : 'smooth'
+            });
+        }
+        previous.addEventListener('click', () => move(-1));
+        next.addEventListener('click', () => move(1));
+        list.addEventListener('scroll', updateControls, { passive: true });
+        if (typeof ResizeObserver !== 'undefined')
+            new ResizeObserver(updateControls).observe(list);
+        else
+            window.addEventListener('resize', updateControls, { passive: true });
+        updateControls();
+    }
+    setupMembersScroll();
+    function setupMotion() {
+        const hero = required('.hero');
+        const particleLayer = required('.hero-particles');
+        const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+        const entrances = new Set();
+        let heroVisible = true;
+        let frame = 0;
+        let pointerX = 0;
+        let pointerY = 0;
+        let scrollY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        const canMove = () => !reducedMotion.matches;
+        const sceneRunning = () => canMove() && heroVisible && !document.hidden;
+        // CSS animates these small layers on the compositor; no continuous JS loop.
+        const particles = document.createDocumentFragment();
+        const particleCount = window.matchMedia('(max-width: 760px)').matches ? 12 : 24;
+        for (let index = 0; index < particleCount; index += 1) {
+            const particle = document.createElement('i');
+            particle.className = 'scene-particle';
+            particle.style.setProperty('--x', `${24 + Math.random() * 76}%`);
+            particle.style.setProperty('--size', `${1.5 + Math.random() * 3}px`);
+            particle.style.setProperty('--alpha', `${.35 + Math.random() * .45}`);
+            particle.style.setProperty('--sway', `${-50 + Math.random() * 100}px`);
+            particle.style.setProperty('--drift', `${-140 + Math.random() * 220}px`);
+            particle.style.setProperty('--duration', `${10 + Math.random() * 14}s`);
+            particle.style.setProperty('--delay', `${-Math.random() * 24}s`);
+            particles.append(particle);
+        }
+        particleLayer.append(particles);
+        function paintScene() {
+            frame = 0;
+            if (!sceneRunning())
+                return;
+            const targetY = pointerY + scrollY;
+            currentX += (pointerX - currentX) * .065;
+            currentY += (targetY - currentY) * .065;
+            hero.style.setProperty('--scene-x', `${currentX.toFixed(2)}px`);
+            hero.style.setProperty('--scene-y', `${currentY.toFixed(2)}px`);
+            if (Math.abs(pointerX - currentX) + Math.abs(targetY - currentY) > .08)
+                queueScene();
+        }
+        function queueScene() {
+            if (!frame && sceneRunning())
+                frame = requestAnimationFrame(paintScene);
+        }
+        function updateSceneState() {
+            root.dataset.motion = canMove() ? 'running' : 'paused';
+            hero.dataset.scene = sceneRunning() ? 'running' : 'paused';
+            if (!sceneRunning()) {
+                cancelAnimationFrame(frame);
+                frame = 0;
+            }
+            else {
+                queueScene();
+            }
+            if (!canMove() || document.hidden)
+                entrances.forEach(animation => animation.finish());
+        }
+        function updateSceneSize() {
+            hero.style.setProperty('--travel', `${hero.offsetHeight + 50}px`);
+            scrollY = Math.min(window.scrollY / hero.offsetHeight, 1) * 18;
+            queueScene();
+        }
+        hero.addEventListener('pointermove', event => {
+            if (!finePointer.matches || !sceneRunning())
+                return;
+            const bounds = hero.getBoundingClientRect();
+            pointerX = ((event.clientX - bounds.left) / bounds.width - .5) * -24;
+            pointerY = ((event.clientY - bounds.top) / bounds.height - .5) * -16;
+            queueScene();
+        }, { passive: true });
+        hero.addEventListener('pointerleave', () => {
+            pointerX = 0;
+            pointerY = 0;
+            queueScene();
+        });
+        window.addEventListener('scroll', () => {
+            if (!heroVisible)
+                return;
+            scrollY = Math.min(window.scrollY / hero.offsetHeight, 1) * 18;
+            queueScene();
+        }, { passive: true });
+        if (typeof ResizeObserver !== 'undefined')
+            new ResizeObserver(updateSceneSize).observe(hero);
+        else
+            window.addEventListener('resize', updateSceneSize, { passive: true });
+        document.addEventListener('visibilitychange', updateSceneState);
+        reducedMotion.addEventListener('change', updateSceneState);
+        function reveal(element, delay = 0) {
+            if (!canMove() || document.hidden || typeof element.animate !== 'function')
+                return;
+            const animation = element.animate([
+                { opacity: 0, transform: 'translateY(22px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 720, delay, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' });
+            entrances.add(animation);
+            animation.onfinish = () => entrances.delete(animation);
+        }
+        updateSceneSize();
+        updateSceneState();
+        hero.querySelectorAll('.hero-copy > *').forEach((element, index) => reveal(element, index * 85));
+        if ('IntersectionObserver' in window) {
+            const sceneObserver = new IntersectionObserver(entries => {
+                heroVisible = entries[0].isIntersecting;
+                updateSceneState();
+            });
+            sceneObserver.observe(hero);
+            const revealObserver = new IntersectionObserver(entries => {
+                for (const entry of entries) {
+                    if (!entry.isIntersecting)
+                        continue;
+                    reveal(entry.target);
+                    revealObserver.unobserve(entry.target);
+                }
+            }, { threshold: .1 });
+            document.querySelectorAll('.about-layout > *, .members-layout > *, .section-heading, .research-layout, .activity-layout > *, .faq-layout > *')
+                .forEach(element => revealObserver.observe(element));
+        }
+    }
+    setupMotion();
     console.log('[HWALBIN] 눈에 보이는 것이 전부는 아닙니다. /robots.txt를 살펴보세요.');
     console.log('[HWALBIN] There is more than meets the eye. Take a look at /robots.txt.');
     const flagDialog = required('#flag-dialog');
