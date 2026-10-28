@@ -1,5 +1,5 @@
 "use strict";
-// The Korean copy stays in index.html so it remains readable without JavaScript.
+// The Korean copy stays in the HTML pages so it remains readable without JavaScript.
 // English translations are authored markup; no user supplied HTML is inserted.
 (() => {
     function required(selector) {
@@ -21,6 +21,7 @@
         "flagDescription": "Welcome to Hwalbin, curious explorer.",
         "flagClose": "Close",
         "skip": "Skip to content",
+        "navHome": "Home",
         "navAbout": "About",
         "navResearch": "Research",
         "navActivity": "Activities",
@@ -29,7 +30,17 @@
         "heroScroll": "Learn more",
         "exploreAbout": "About the team",
         "exploreActivities": "View activities",
+        "portalTitle": "Explore Hwalbin",
+        "portalIntro": "Turn a page and get to know the team.",
+        "portalAbout": "How we solve and research together",
+        "portalResearch": "Four perspectives, from web to cryptography",
+        "portalActivity": "Our records in international CTFs",
+        "paintingKicker": "One landscape, four research paths",
+        "paintingTitle": "Read beyond the landscape",
+        "paintingAlt": "A minhwa-inspired landscape with a hanok, pine trees, mountains, a river, and cranes",
         "aboutTitle": "About the team",
+        "aboutSectionTitle": "How we work",
+        "aboutPageIntro": "We analyze challenges together and share how they work.",
         "aboutLead": "Solve the challenge. Understand how it works.",
         "aboutTeam": "Hwalbin is a hacking team that competes in international CTFs and researches security vulnerabilities. We analyze challenges together, share solutions, and report vulnerabilities within the authorized scope of bug bounty programs.",
         "factActivity": "Activities",
@@ -38,6 +49,8 @@
         "factResearchValue": "Web · Systems · Reversing · Cryptography",
         "factRecord": "Public records",
         "researchTitle": "Research areas",
+        "researchSectionTitle": "Four perspectives",
+        "researchPageIntro": "Four perspectives on security problems.",
         "researchIntro": "Four approaches to understanding security.",
         "webTab": "Web security",
         "systemTab": "System security",
@@ -52,6 +65,8 @@
         "cryptoHeading": "Examine cryptographic design and implementation.",
         "cryptoDesc": "Cryptography examines the mathematics behind cryptographic algorithms and protocols, including vulnerabilities caused by gaps between design assumptions and implementation.",
         "activityTitle": "Activity records",
+        "activitySectionTitle": "Competition results",
+        "activityPageIntro": "Competition results collected in one place.",
         "internationalCTF": "International CTF",
         "featuredRank": "10<span>th</span>",
         "featuredTotal": "out of 608 teams",
@@ -63,16 +78,20 @@
         "faustRank": "60th place",
         "recordSource": "Placements provided by the team",
         "faqTitle": "Frequently asked questions",
+        "faqSectionTitle": "Good to know",
+        "faqPageIntro": "Basic information about our team and activities.",
         "faqIntro": "About the team and our activities.",
         "faqTeamQ": "What kind of team is Hwalbin?",
         "faqTeamA": "We are a hacking team that competes in international CTFs, researches security vulnerabilities, and participates in bug bounty programs.",
         "faqFieldsQ": "Which fields do you explore?",
-        "faqFieldsA": "This page introduces web security, system security, reverse engineering, and cryptography. Select a research tab to read about each area.",
+        "faqFieldsA": "We introduce web security, system security, reverse engineering, and cryptography.",
+        "faqResearchLink": "Explore research →",
         "faqJoinQ": "Can I apply to join the team?",
         "faqJoinA": "There is currently no recruitment announcement on this website.",
         "faqRecordQ": "Where can I find competition records?",
-        "faqRecordA": "Hwalbin’s CTFtime team profile lists our competition history and results.",
-        "backTop": "Back to top",
+        "faqRecordA": "Find our competition history and results on the Activities page and CTFtime.",
+        "faqActivityLink": "View activities →",
+        "homeLink": "Go home",
         "historyLink": "All records on CTFtime",
         "homeLabel": "Hwalbin home",
         "navLabel": "Main navigation",
@@ -96,6 +115,11 @@
             throw new Error('A translated label needs an aria-label');
         return { element, key: translationKey(element.dataset.i18nLabel), korean };
     });
+    const localizedAlts = Array.from(document.querySelectorAll('[data-i18n-alt]'), element => ({
+        element,
+        key: translationKey(element.dataset.i18nAlt),
+        korean: element.alt,
+    }));
     let language = 'ko';
     let currentTheme = 'dark';
     function updateMenuLabel() {
@@ -124,6 +148,9 @@
         }
         for (const { element, key, korean } of localizedLabels) {
             element.setAttribute('aria-label', value === 'en' ? english[key] : korean);
+        }
+        for (const { element, key, korean } of localizedAlts) {
+            element.alt = value === 'en' ? english[key] : korean;
         }
         description.content = value === 'en'
             ? 'Hwalbin is a hacking team competing in international CTFs and researching security vulnerabilities. Explore our team, research areas, and competition records.'
@@ -216,23 +243,21 @@
             }
         });
     });
-    const links = Array.from(nav.querySelectorAll('a'));
-    if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => {
-            for (const entry of entries) {
-                if (!entry.isIntersecting)
-                    continue;
-                for (const link of links) {
-                    const active = link.hash === `#${entry.target.id}`;
-                    link.classList.toggle('active', active);
-                    if (active)
-                        link.setAttribute('aria-current', 'location');
-                    else
-                        link.removeAttribute('aria-current');
-                }
-            }
-        }, { rootMargin: '-15% 0px -60% 0px', threshold: 0 });
-        document.querySelectorAll('section[id]').forEach(section => observer.observe(section));
+    const painting = document.querySelector('.painting-link');
+    if (painting && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        painting.addEventListener('pointermove', event => {
+            if (event.pointerType === 'touch')
+                return;
+            const bounds = painting.getBoundingClientRect();
+            const x = (event.clientX - bounds.left) / bounds.width - .5;
+            const y = (event.clientY - bounds.top) / bounds.height - .5;
+            painting.style.setProperty('--painting-x', `${(-x * 18).toFixed(1)}px`);
+            painting.style.setProperty('--painting-y', `${(-y * 12).toFixed(1)}px`);
+        });
+        painting.addEventListener('pointerleave', () => {
+            painting.style.setProperty('--painting-x', '0px');
+            painting.style.setProperty('--painting-y', '0px');
+        });
     }
     console.log('[HWALBIN] 눈에 보이는 것이 전부는 아닙니다. /robots.txt를 살펴보세요.');
     console.log('[HWALBIN] There is more than meets the eye. Take a look at /robots.txt.');
@@ -243,11 +268,14 @@
         logo.addEventListener('click', event => {
             if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
                 return;
+            const home = location.pathname.endsWith('/') || location.pathname.endsWith('/index.html');
+            if (!home)
+                return;
+            event.preventDefault();
             logoClicks += 1;
             if (logoClicks < 5)
                 return;
             logoClicks = 0;
-            event.preventDefault();
             flagValue.textContent = 'hwalbin{h3y_th3r3_w3lc0m3_t0_hw4lb1n_5ec}';
             if (!flagDialog.open)
                 flagDialog.showModal();
