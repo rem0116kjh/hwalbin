@@ -195,19 +195,28 @@
     if (!panel) throw new Error(`Missing panel for tab ${tab.id}`);
     return { tab, panel };
   });
+  let scrollToResearch: ((index: number) => void) | undefined;
 
   function activateTab(tab: HTMLButtonElement, focus = false): void {
+    const previous = tabPanels.findIndex(item => item.tab.getAttribute('aria-selected') === 'true');
+    const next = tabPanels.findIndex(item => item.tab === tab);
+    if (next !== previous) {
+      required<HTMLElement>('#research').dataset.researchDirection = next < previous ? 'backward' : 'forward';
+    }
     for (const item of tabPanels) {
       const selected = item.tab === tab;
       item.tab.setAttribute('aria-selected', String(selected));
       item.tab.tabIndex = selected ? 0 : -1;
       item.panel.hidden = !selected;
     }
-    if (focus) tab.focus();
+    if (focus) tab.focus({ preventScroll: true });
   }
 
   tabPanels.forEach(({ tab }, index) => {
-    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('click', () => {
+      activateTab(tab);
+      scrollToResearch?.(index);
+    });
     tab.addEventListener('keydown', event => {
       let next: number | undefined;
       if (event.key === 'ArrowDown' || event.key === 'ArrowRight') next = (index + 1) % tabPanels.length;
@@ -217,9 +226,100 @@
       if (next !== undefined) {
         event.preventDefault();
         activateTab(tabPanels[next].tab, true);
+        scrollToResearch?.(next);
       }
     });
   });
+
+  function setupResearchScroll(): void {
+    const research = required<HTMLElement>('#research');
+    const header = required<HTMLElement>('.header');
+    const scene = document.createElement('div');
+    scene.className = 'research-scene';
+    scene.append(required<HTMLElement>('#research > .wrap'));
+    const track = document.createElement('div');
+    track.className = 'research-track';
+    track.setAttribute('aria-hidden', 'true');
+    for (let index = 0; index < tabPanels.length; index += 1) {
+      const stop = document.createElement('div');
+      stop.className = 'research-stop';
+      track.append(stop);
+    }
+    research.append(scene, track);
+    research.dataset.researchScroll = '';
+
+    let sceneHeight = 0;
+    let scrollFrame = 0;
+    let sizeFrame = 0;
+    const selectedIndex = (): number => tabPanels.findIndex(({ tab }) => tab.getAttribute('aria-selected') === 'true');
+    const trackStart = (): number => research.getBoundingClientRect().top + window.scrollY - header.offsetHeight;
+
+    function updateResearch(): void {
+      scrollFrame = 0;
+      if (!sceneHeight) return;
+      const progress = window.scrollY - trackStart();
+      const index = Math.max(0, Math.min(tabPanels.length - 1, Math.floor((progress + 2) / sceneHeight)));
+      const previous = selectedIndex();
+      if (index !== previous) {
+        activateTab(tabPanels[index].tab);
+      }
+      // On short screens, let the rest of the current field scroll into view
+      // before the next checkpoint. No wheel or touch input is intercepted.
+      const overflow = Math.max(0, sceneHeight - (window.innerHeight - header.offsetHeight));
+      // The final field already scrolls naturally as its sticky container
+      // reaches the end of the track; applying a shift there would move twice.
+      const shift = index === tabPanels.length - 1 ? 0
+        : Math.max(0, Math.min(overflow, progress - index * sceneHeight));
+      scene.style.setProperty('--research-shift', `${-shift}px`);
+    }
+
+    function measureResearch(): void {
+      sizeFrame = 0;
+      const index = selectedIndex();
+      const previousHeight = sceneHeight;
+      const progress = window.scrollY - trackStart();
+      const withinTrack = previousHeight > 0 && progress >= -2 && progress < previousHeight * tabPanels.length;
+      const localOffset = Math.max(0, progress - index * previousHeight);
+      const focused = research.contains(document.activeElement) ? document.activeElement as HTMLElement : null;
+      let nextHeight = 0;
+      research.dataset.researchMeasuring = '';
+      // Reserve the tallest translated panel so a field change never shifts
+      // the snap positions or pushes the next section unexpectedly.
+      for (const candidate of tabPanels) {
+        for (const { panel } of tabPanels) panel.hidden = panel !== candidate.panel;
+        nextHeight = Math.max(nextHeight, scene.offsetHeight);
+      }
+      for (const [panelIndex, { panel }] of tabPanels.entries()) panel.hidden = panelIndex !== index;
+      sceneHeight = Math.ceil(nextHeight);
+      research.style.setProperty('--research-scene-height', `${sceneHeight}px`);
+      delete research.dataset.researchMeasuring;
+      if (focused && document.activeElement !== focused) focused.focus({ preventScroll: true });
+      if (withinTrack && sceneHeight !== previousHeight) {
+        const overflow = Math.max(0, sceneHeight - (window.innerHeight - header.offsetHeight));
+        window.scrollTo({ top: trackStart() + index * sceneHeight + Math.min(localOffset, overflow), behavior: 'instant' });
+      }
+      updateResearch();
+    }
+
+    function queueSize(): void {
+      if (!sizeFrame) sizeFrame = requestAnimationFrame(measureResearch);
+    }
+    window.addEventListener('resize', queueSize, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!scrollFrame) scrollFrame = requestAnimationFrame(updateResearch);
+    }, { passive: true });
+    new MutationObserver(queueSize).observe(root, { attributes: true, attributeFilter: ['lang'] });
+    document.fonts.ready.then(queueSize);
+    window.addEventListener('pageshow', queueSize);
+    measureResearch();
+    scrollToResearch = index => {
+      // The scene stays in place; direct tab selection changes its checkpoint
+      // immediately, while wheel, touch and keyboard scrolling remain native.
+      window.scrollTo({ top: trackStart() + index * sceneHeight, behavior: 'instant' });
+      updateResearch();
+    };
+  }
+  setupResearchScroll();
 
   const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a'));
   if ('IntersectionObserver' in window) {
@@ -234,7 +334,7 @@
         }
       }
     }, { rootMargin: '-15% 0px -60% 0px', threshold: 0 });
-    document.querySelectorAll<HTMLElement>('section[id]').forEach(section => observer.observe(section));
+    document.querySelectorAll<HTMLElement>('main > section').forEach(section => observer.observe(section));
   }
 
   function setupMotion(): void {
@@ -343,18 +443,56 @@
         updateSceneState();
       });
       sceneObserver.observe(hero);
-      const revealObserver = new IntersectionObserver(entries => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          reveal(entry.target as HTMLElement);
-          revealObserver.unobserve(entry.target);
-        }
-      }, { threshold: .1 });
-      document.querySelectorAll<HTMLElement>('.about-layout > *, .section-heading, .research-layout, .activity-layout > *, .faq-layout > *')
-        .forEach(element => revealObserver.observe(element));
     }
   }
   setupMotion();
+
+  function setupSectionTransitions(): void {
+    if (!('IntersectionObserver' in window)) return;
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('main > .content'));
+    const header = required<HTMLElement>('.header');
+    let observer: IntersectionObserver | undefined;
+    function updateSections(entries: IntersectionObserverEntry[]): void {
+      for (const entry of entries) {
+        const section = entry.target as HTMLElement;
+        // Re-arm only after a chapter leaves the view, so scrolling within a
+        // tall mobile section never restarts its entrance or hides its links.
+        section.dataset.sectionReveal = entry.isIntersecting || section.contains(document.activeElement)
+          ? 'visible' : 'waiting';
+      }
+    }
+
+    for (const section of sections) {
+      section.querySelectorAll<HTMLElement>(
+        '.section-heading, .about-layout > .section-label, .about-body > *, .research-layout, .activity-layout > *, .faq-layout > div:first-child, .questions > details'
+      ).forEach((item, index) => {
+        item.dataset.sectionItem = '';
+        item.style.setProperty('--section-order', String(index));
+      });
+      section.addEventListener('focusin', () => { section.dataset.sectionReveal = 'visible'; });
+    }
+
+    function syncSections(): void {
+      observer?.disconnect();
+      if (!reducedMotion.matches) {
+        observer = new IntersectionObserver(updateSections, {
+          rootMargin: `-${header.offsetHeight + 1}px 0px -1px 0px`, threshold: 0,
+        });
+      }
+      for (const section of sections) {
+        const bounds = section.getBoundingClientRect();
+        const inView = bounds.top < window.innerHeight - 1 && bounds.bottom > header.offsetHeight + 1;
+        section.dataset.sectionReveal = reducedMotion.matches || inView ? 'visible' : 'waiting';
+        if (!reducedMotion.matches) observer?.observe(section);
+      }
+    }
+
+    reducedMotion.addEventListener('change', syncSections);
+    window.matchMedia('(max-width: 760px)').addEventListener('change', syncSections);
+    window.addEventListener('pageshow', syncSections);
+    syncSections();
+  }
+  setupSectionTransitions();
 
   console.log('[HWALBIN] 눈에 보이는 것이 전부는 아닙니다. /robots.txt를 살펴보세요.');
   console.log('[HWALBIN] There is more than meets the eye. Take a look at /robots.txt.');
